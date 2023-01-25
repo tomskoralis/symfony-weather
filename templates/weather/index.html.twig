@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Weather{% endblock %}
+
+{% block body %}
+    <h1>Current Weather</h1>
+    <h2>{{ weatherRiga.getLocation }}</h2>
+    <ul>
+        <li>Temperature: {{ weatherRiga.getTemperature }}</li>
+        <li>Wind: {{ weatherRiga.getWindSpeed }} from {{ weatherRiga.getWindDirection }}</li>
+    </ul>
+
+    <h2>{{ weatherNewYork.getLocation }}</h2>
+    <ul>
+        <li>Temperature: {{ weatherNewYork.getTemperature }}</li>
+        <li>Wind: {{ weatherNewYork.getWindSpeed }} from {{ weatherNewYork.getWindDirection }}</li>
+    </ul>
+{% endblock %}

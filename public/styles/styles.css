@@ -1,0 +1,31 @@
+.page-navigation {
+    background-color: #333;
+    width: 100vw;
+    min-height: 3rem;
+    display: flex;
+}
+
+.page-navigation-items {
+    width: 40rem;
+    height: inherit;
+    margin: 0 auto;
+    column-gap: 1rem;
+    display: flex;
+    flex-wrap: nowrap;
+}
+
+.page-wrapper {
+    padding-top: 1rem;
+    width: 40rem;
+    margin: 0 auto;
+}
+
+.page-navigation-items a {
+    color: #fff;
+    height: 100%;
+    padding: 0.5rem;
+}
+
+.page-navigation-items a:hover {
+    background-color: #ff0000;
+}
