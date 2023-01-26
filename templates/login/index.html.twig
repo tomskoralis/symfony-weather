@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Login{% endblock %}
+
+{% block body %}
+    <h1>Login</h1>
+    <form id="login-form" method="post" action="{{ path("api_login_check") }}">
+        <div>
+            <label>
+                <input type="text" id="username" name="username" placeholder="Username" autofocus required>
+            </label>
+        </div>
+
+        <div>
+            <label>
+                <input type="password" id="password" name="password" placeholder="Password" autofocus required>
+            </label>
+        </div>
+
+        <button id="login-button" type="button">Login</button>
+
+        <p id="login-error"></p>
+    </form>
+
+    <script>
+        const LoginButton = document.getElementById("login-button");
+
+        const handleLogin = async () => {
+            const username = document.getElementById("username");
+            const password = document.getElementById("password");
+            const errorField = document.getElementById("login-error");
+
+            fetch("{{ path("api_login_check") }}", {
+                method: "POST",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({"username": username.value, "password": password.value})
+            })
+                .then(response => response.json())
+                .then(response => {
+                    if (response.token !== undefined) {
+                        setJwtToken(response.token);
+                        location.href = "{{ path("app_home") }}";
+                    } else {
+                        errorField.innerHTML = "Incorrect username or password!";
+                    }
+                });
+        }
+        LoginButton.addEventListener("click", handleLogin)
+
+    </script>
+{% endblock %}

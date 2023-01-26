@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Register{% endblock %}
+
+{% block body %}
+    <h1>Register</h1>
+    <form id="register-form" action="">
+        <div>
+            <label>
+                <input type="text" id="username" name="username" placeholder="Username" autofocus required>
+            </label>
+        </div>
+
+        <div>
+            <label>
+                <input type="password" id="password" name="password" placeholder="Password" autofocus required>
+            </label>
+        </div>
+
+        <button id="register-button" type="button">Register</button>
+
+        <p id="register-error"></p>
+    </form>
+
+    <script>
+        const registerButton = document.getElementById("register-button");
+
+        const handleRegister = async () => {
+            const username = document.getElementById("username");
+            const password = document.getElementById("password");
+            const errorField = document.getElementById("register-error");
+
+            fetch("{{ path("_api_/users{._format}_post") }}", {
+                method: "POST",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({"username": username.value, "password": password.value})
+            })
+                .then(response => response.json())
+                .then(response => {
+                    if (response.username === username.value) {
+                        location.href = "{{ path("app_login") }}";
+                    } else {
+                        errorField.innerHTML = "Failed to register!";
+                    }
+                });
+        }
+
+        registerButton.addEventListener("click", handleRegister);
+    </script>
+{% endblock %}

@@ -1,6 +1,31 @@
-<nav {{ attributes }} class="page-navigation">
-    <div class="page-navigation-items">
-        <a href="{{ path('app_home') }}">Welcome</a>
-        <a href="{{ path('app_weather') }}">Weather</a>
-    </div>
-</nav>
+<div {{ attributes }} class="page-navigation">
+    <nav class="page-navigation-items">
+        <a class="nav-item" href="{{ path('app_home') }}">Welcome</a>
+        <a class="nav-item" href="{{ path('app_weather') }}">Weather</a>
+        <a id="nav-register" class="nav-item" href="{{ path('app_register') }}">Register</a>
+        <a id="nav-login" class="nav-item" href="{{ path('app_login') }}">Login</a>
+        <p id="nav-logout" class="nav-item">Logout</p>
+    </nav>
+
+    <script>
+        const navRegister = document.getElementById("nav-register");
+        const navLogin = document.getElementById("nav-login");
+        const navLogout = document.getElementById("nav-logout");
+
+        if (getJwtToken()) {
+            navRegister.style.display = "none";
+            navLogin.style.display = "none";
+            navLogout.style.display = "block";
+        } else {
+            navRegister.style.display = "block";
+            navLogin.style.display = "block";
+            navLogout.style.display = "none";
+        }
+
+        navLogout.addEventListener("click", async () => {
+            setJwtToken("");
+            setRefreshToken("");
+            location.reload();
+        });
+    </script>
+</div>

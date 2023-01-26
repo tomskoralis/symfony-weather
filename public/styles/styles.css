@@ -14,18 +14,20 @@
     flex-wrap: nowrap;
 }
 
+.nav-item {
+    color: #fff;
+    height: 100%;
+    padding: 0.5rem;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.nav-item:hover {
+    background-color: #ff0000;
+}
+
 .page-wrapper {
     padding-top: 1rem;
     width: 40rem;
     margin: 0 auto;
-}
-
-.page-navigation-items a {
-    color: #fff;
-    height: 100%;
-    padding: 0.5rem;
-}
-
-.page-navigation-items a:hover {
-    background-color: #ff0000;
 }
