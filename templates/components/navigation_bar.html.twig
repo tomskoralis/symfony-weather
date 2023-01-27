@@ -1,28 +1,33 @@
 <div {{ attributes }} class="page-navigation">
     <nav class="page-navigation-items">
-        <a class="nav-item" href="{{ path('app_home') }}">Welcome</a>
-        <a class="nav-item" href="{{ path('app_weather') }}">Weather</a>
-        <a id="nav-register" class="nav-item" href="{{ path('app_register') }}">Register</a>
-        <a id="nav-login" class="nav-item" href="{{ path('app_login') }}">Login</a>
-        <p id="nav-logout" class="nav-item">Logout</p>
+        <a class="nav-item nav-welcome" href="{{ path('app_home') }}">Home</a>
+        <a class="nav-item nav-weather" href="{{ path('app_weather') }}">Weather</a>
+        <a class="nav-item nav-register" href="{{ path('app_register') }}">Register</a>
+        <a class="nav-item nav-login" href="{{ path('app_login') }}">Login</a>
+        <p class="nav-item nav-logout">Logout</p>
     </nav>
 
     <script>
-        const navRegister = document.getElementById("nav-register");
-        const navLogin = document.getElementById("nav-login");
-        const navLogout = document.getElementById("nav-logout");
+        const navWelcome = $(".nav-welcome");
+        const navWeather = $(".nav-weather");
+        const navRegister = $(".nav-register");
+        const navLogin = $(".nav-login");
+        const navLogout = $(".nav-logout");
 
-        if (getJwtToken()) {
-            navRegister.style.display = "none";
-            navLogin.style.display = "none";
-            navLogout.style.display = "block";
-        } else {
-            navRegister.style.display = "block";
-            navLogin.style.display = "block";
-            navLogout.style.display = "none";
+        const navBarLayout = () => {
+            const jwtToken = getJwtToken();
+            navWelcome.css("display", "block");
+            navWeather.css("display", jwtToken ? "block" : "none");
+            navRegister.css("display", jwtToken ? "none" : "block");
+            navLogin.css("display", jwtToken ? "none" : "block");
+            navLogout.css("display", jwtToken ? "block" : "none");
         }
 
-        navLogout.addEventListener("click", async () => {
+        $(document).ready(() => {
+            navBarLayout();
+        });
+
+        navLogout.click(() => {
             setJwtToken("");
             setRefreshToken("");
             location.reload();

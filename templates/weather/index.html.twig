@@ -3,16 +3,96 @@
 {% block title %}Weather{% endblock %}
 
 {% block body %}
-    <h1>Current Weather</h1>
-    <h2>{{ weatherRiga.getLocation }}</h2>
-    <ul>
-        <li>Temperature: {{ weatherRiga.getTemperature }}</li>
-        <li>Wind: {{ weatherRiga.getWindSpeed }} from {{ weatherRiga.getWindDirection }}</li>
-    </ul>
+    <h1>Weather</h1>
+    <br>
 
-    <h2>{{ weatherNewYork.getLocation }}</h2>
-    <ul>
-        <li>Temperature: {{ weatherNewYork.getTemperature }}</li>
-        <li>Wind: {{ weatherNewYork.getWindSpeed }} from {{ weatherNewYork.getWindDirection }}</li>
-    </ul>
+    <p class="weather-error">
+        Need to be logged in to gather weather data!
+    </p>
+
+    <div class="weather-input">
+        <label>
+            <input type="text" class="location-input" name="location" placeholder="Location" value="Riga" autofocus>
+        </label>
+
+        <label>
+            Metric
+            <input type="radio" name='units' value='metric' checked>
+        </label>
+        <label>
+            Imperial
+            <input type="radio" name='units' value='imperial'>
+        </label>
+
+        <div>
+            <button class="temperature-button">Temperature</button>
+            <button class="average-button">Average Temperature</button>
+            <button class="wind-button">Wind</button>
+        </div>
+        <br>
+
+        <p class="weather-result"></p>
+    </div>
+
+    <script>
+        const jwtToken = getJwtToken();
+
+        $(document).ready(() => {
+            $(".weather-error").css("display", jwtToken ? "none" : "block");
+            $(".weather-input").css("display", jwtToken ? "block" : "none");
+        });
+
+        const locationInput = $(".location-input");
+        const weatherData = $(".weather-result");
+        const temperatureButton = $(".temperature-button");
+        const averageButton = $(".average-button");
+        const windButton = $(".wind-button");
+
+        const getWeatherData = (type) => {
+            $.ajax({
+                type: "GET",
+                url: "{{ path("app_weather_data") }}",
+                contentType: "json",
+                headers: {"Authorization": "Bearer " + jwtToken},
+                data: {
+                    location: locationInput.val(),
+                    units: $('input[name="units"]:checked').val(),
+                },
+                success: (data) => {
+                    switch (type) {
+                        case "temperature":
+                            weatherData.text(
+                                `Current temperature in ${data.weather.location}: ${data.weather.currentTemperature}`
+                            );
+                            break;
+                        case "average":
+                            weatherData.text(
+                                `Next 5 day average temperature in ${data.weather.location}: ${data.weather.averageTemperature}`
+                            );
+                            break;
+                        case "wind":
+                            weatherData.text(
+                                `Wind in ${data.weather.location}: ${data.weather.wind}`
+                            );
+                            break;
+                        default:
+                            weatherData.text("Incorrect data type!");
+                    }
+                },
+                error: () => {
+                    weatherData.text("Couldn't gather data!");
+                },
+            });
+        }
+
+        temperatureButton.click(() => {
+            getWeatherData("temperature");
+        });
+        averageButton.click(() => {
+            getWeatherData("average");
+        });
+        windButton.click(() => {
+            getWeatherData("wind");
+        });
+    </script>
 {% endblock %}

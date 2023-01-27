@@ -42,7 +42,7 @@
                 .then(response => {
                     if (response.token !== undefined) {
                         setJwtToken(response.token);
-                        location.href = "{{ path("app_home") }}";
+                        location.href = "{{ path("app_weather") }}";
                     } else {
                         errorField.innerHTML = "Incorrect username or password!";
                     }
