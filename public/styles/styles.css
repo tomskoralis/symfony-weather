@@ -19,7 +19,7 @@
     height: 100%;
     padding: 0.5rem;
     cursor: pointer;
-    text-decoration: underline;
+    text-decoration: none;
 }
 
 .nav-item:hover {

@@ -12,17 +12,21 @@
 
     <div class="weather-input">
         <label>
-            <input type="text" class="location-input" name="location" placeholder="Location" value="Riga" autofocus>
+            Location:<br>
+            <input type="text" class="location-input" name="location" value="Riga" autofocus>
         </label>
 
-        <label>
-            Metric
-            <input type="radio" name='units' value='metric' checked>
-        </label>
-        <label>
-            Imperial
-            <input type="radio" name='units' value='imperial'>
-        </label>
+        <div>
+            <label>
+                Metric
+                <input type="radio" name="units" value="metric" checked>
+            </label>
+            <label>
+                Imperial
+                <input type="radio" name="units" value="imperial">
+            </label>
+        </div>
+        <br>
 
         <div>
             <button class="temperature-button">Temperature</button>
@@ -31,19 +35,18 @@
         </div>
         <br>
 
-        <p class="weather-result"></p>
+        <p class="weather-data"></p>
     </div>
 
     <script>
-        const jwtToken = getJwtToken();
-
         $(document).ready(() => {
+            const jwtToken = getJwtToken();
             $(".weather-error").css("display", jwtToken ? "none" : "block");
             $(".weather-input").css("display", jwtToken ? "block" : "none");
         });
 
         const locationInput = $(".location-input");
-        const weatherData = $(".weather-result");
+        const weatherData = $(".weather-data");
         const temperatureButton = $(".temperature-button");
         const averageButton = $(".average-button");
         const windButton = $(".wind-button");
@@ -51,14 +54,19 @@
         const getWeatherData = (type) => {
             $.ajax({
                 type: "GET",
-                url: "{{ path("app_weather_data") }}",
+                url: "{{ path("api_weather") }}",
                 contentType: "json",
-                headers: {"Authorization": "Bearer " + jwtToken},
+                headers: {"Authorization": "Bearer " + getJwtToken()},
                 data: {
                     location: locationInput.val(),
                     units: $('input[name="units"]:checked').val(),
                 },
-                success: (data) => {
+            })
+                .done((data) => {
+                    if (data.weather.location === "UNKNOWN") {
+                        weatherData.text("Unknown location!");
+                        return;
+                    }
                     switch (type) {
                         case "temperature":
                             weatherData.text(
@@ -74,15 +82,29 @@
                             weatherData.text(
                                 `Wind in ${data.weather.location}: ${data.weather.wind}`
                             );
-                            break;
-                        default:
-                            weatherData.text("Incorrect data type!");
                     }
-                },
-                error: () => {
-                    weatherData.text("Couldn't gather data!");
-                },
-            });
+                })
+                .fail((error) => {
+                    if (error.status === 401) {
+                        $.ajax({
+                            type: "GET",
+                            url: "{{ path("gesdinet_jwt_refresh_token") }}",
+                            contentType: "json",
+                            data: {
+                                refresh_token: getRefreshToken(),
+                            },
+                        })
+                            .done((data) => {
+                                setJwtToken(data.token);
+                                getWeatherData(type);
+                            })
+                            .fail((error) => {
+                                weatherData.text(error.responseJSON.message);
+                            });
+                    } else {
+                        weatherData.text(error.statusText);
+                    }
+                });
         }
 
         temperatureButton.click(() => {

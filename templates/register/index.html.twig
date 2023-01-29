@@ -30,7 +30,7 @@
             const password = document.getElementById("password");
             const errorField = document.getElementById("register-error");
 
-            fetch("{{ path("_api_/users{._format}_post") }}", {
+            fetch("{{ path("api_users_post_collection") }}", {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",

@@ -5,14 +5,13 @@ namespace App\MessageHandler;
 use App\Message\WeatherMessage;
 use App\Model\Weather;
 use Cmfcmf\OpenWeatherMap;
-use Http\Factory\Guzzle\RequestFactory;
 use Http\Adapter\Guzzle6\Client;
+use Http\Factory\Guzzle\RequestFactory;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 
-#[AsMessageHandler]
-final class WeatherHandler
+final class WeatherMessageHandler implements MessageHandlerInterface
 {
     private OpenWeatherMap $openWeatherMap;
     private const TTL = 60;
@@ -30,10 +29,19 @@ final class WeatherHandler
 
     public function __invoke(WeatherMessage $sendWeatherMessage): array
     {
-        $weatherNow = $this->openWeatherMap->getWeather(
-            $sendWeatherMessage->getLocation(),
-            $sendWeatherMessage->getUnits()
-        );
+        try {
+            $weatherNow = $this->openWeatherMap->getWeather(
+                $sendWeatherMessage->getLocation(),
+                $sendWeatherMessage->getUnits()
+            );
+        } catch (OpenWeatherMap\Exception $e) {
+            return [
+                'location' => 'UNKNOWN',
+                'currentTemperature' => '0',
+                'averageTemperature' => '0',
+                'wind' => '0',
+            ];
+        }
 
         $weatherForecast = $this->openWeatherMap->getWeatherForecast(
             $sendWeatherMessage->getLocation(),
