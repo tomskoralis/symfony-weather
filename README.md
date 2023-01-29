@@ -22,20 +22,23 @@
     git clone https://github.com/tomskoralis/symfony-weather
     cd symfony-weather/
     ```
-2. Install the required packages using the command:
+2. Make a copy of the `.env.example` and rename the copy to `.env` by using the command:
+    ```
+    cp .env.example .env
+    ```
+3. Install the required packages using the command:
     ```
     composer install
     ```
-3. Register at https://home.openweathermap.org/users/sign_up and get the API key
-4. Save the API key in the application environment using the command:
+4. Register at https://home.openweathermap.org/users/sign_up and get the API key
+5. Save the API key in the application environment using the command:
     ```
     symfony console secrets:set API_KEY
     ```
-5. Generate SSL keys using the command:
+6. Set the `JWT_PASSPHRASE` in the `.env` file generate SSL keys using the command:
     ```
     symfony console lexik:jwt:generate-keypair
     ```
-6. Make a copy of the `.env.example` and rename the copy to `.env`
 7. Enter mySQL username and password in the `.env` file by replacing the USER and PASSWORD in the `DATABASE_URL`
 8. Create a new database and run the migrations using the commands:
     ```
